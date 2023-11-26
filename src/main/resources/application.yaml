@@ -31,7 +31,7 @@ spring:
       enabled: false
   sql:
     init:
-      mode:
+      mode: always
   data:
     rest:
       base-path: /api
