@@ -4,13 +4,7 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.ToString;
-import org.springframework.data.annotation.CreatedBy;
-import org.springframework.data.annotation.CreatedDate;
-import org.springframework.data.annotation.LastModifiedBy;
-import org.springframework.data.annotation.LastModifiedDate;
-import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 
-import java.time.LocalDateTime;
 import java.util.LinkedHashSet;
 import java.util.Objects;
 import java.util.Set;
@@ -26,32 +20,30 @@ import java.util.Set;
         @Index(columnList = "createdBy"),
 })
 // JPA를 사용하여 entity로 변경
-@EntityListeners(AuditingEntityListener.class)
 @Entity
-public class Article {
-    @Id                 // 엔터티 클래스의 primary key
+public class Article extends AuditingFields{
+    @Id                                                             // 엔터티 클래스의 primary key
     @GeneratedValue(strategy = GenerationType.IDENTITY)             // DB가 자동으로 ID 생성
     private Long id;
 
-    // 내용을 변경할 수 있으므로 setter 설정
-    // null이 가능한가 -> true가 default 값 => @Column 이라 표기 가능하지만, 파라미터 없이 쓴다면 생략도 가능!
-    // @Column = 엔터티 클래스의 필드와 데이터베이스 테이블의 컬럼 매핑
-    @Setter @Column(nullable = false) private String title;       // 제목
+    /*
+    내용을 변경할 수 있으므로 setter 설정
+    null이 가능한가 -> true가 default 값 => @Column 이라 표기 가능하지만, 파라미터 없이 쓴다면 생략도 가능!
+    @Column = 엔터티 클래스의 필드와 데이터베이스 테이블의 컬럼 매핑
+     */
+
+    @Setter @Column(nullable = false) private String title;                       // 제목
     @Setter @Column(nullable = false, length = 10000) private String content;     // 본문
 
-    // @Column 으로 감지
-    @Setter private String hashtag;     // 해시태그
+    // @Column을 생략해도 @Column으로 감지
+    @Setter private String hashtag;                     // 해시태그
 
-    @ToString.Exclude                   // ToString 끊어주기
+    @ToString.Exclude                                  // ToString 끊어주기
     @OrderBy("id")
     @OneToMany(mappedBy = "article", cascade = CascadeType.ALL)
     private final Set<ArticleComment> articleComments = new LinkedHashSet<>();
 
-    // auto setting (JPA Auditing)
-    @CreatedDate @Column(nullable = false) private LocalDateTime createdAt;            // 생성일시
-    @CreatedBy @Column(nullable = false, length = 100) private String createdBy;                   // 생성자
-    @LastModifiedDate @Column(nullable = false) private LocalDateTime modifiedAt;           // 수정일시
-    @LastModifiedBy @Column(nullable = false, length = 100) private String modifiedBy;                  // 수정자
+
 
 
     // entity는 public 또는 protected로 아무 인자없는 생성자가 필요합니다.
