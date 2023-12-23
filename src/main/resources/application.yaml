@@ -36,6 +36,8 @@ spring:
     rest:
       base-path: /api
       detection-strategy: annotated
+  profiles:
+    active: testdb
 
 ---
 # --- 는 document 분리 -> 여러 개의 document 작성이 가능하다
